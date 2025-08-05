@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telefone</title>
+</head>
+<body>
+
+<input type="tel" id="inputTelefone" name="inputTelefone" onkeypress="mascara(this, telefone);" onblur="mascara(this, telefone);" />
+
+<script>
+  function mascara(o, f) {
+    setTimeout(function() {
+      var v = telefone(o.value);
+      if (v != o.value) {
+        o.value = v;
+      }
+    }, 1);
+  }
+
+  function telefone(v) {
+    var tel = v.replace(/\D/g, "");
+    tel = tel.replace(/^0/, "");
+    if (tel.length > 10) {
+      tel = tel.replace(/^(\d\d)(\d{5})(\d{4}).*/, "($1) $2-$3");
+    } else if (tel.length > 5) {
+      tel = tel.replace(/^(\d\d)(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+    } else if (tel.length > 2) {
+      tel = tel.replace(/^(\d\d)(\d{0,5})/, "($1) $2");
+    } else {
+      tel = tel.replace(/^(\d*)/, "($1");
+    }
+    return tel;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<?php
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+try{
+    $dbh = new pdo( 'mysql:host=18.230.191.124;dbname=gpansolc_crm',
+                    'gpansolc_adm',
+                    'ADMsistemas',
+                    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+   //echo json_encode(array('outcome' => true));
+}
+catch(PDOException $ex){
+   echo json_encode(array('outcome' => false, 'message' => 'Unable to connect'));
+}
+
+$api = $_GET["api"];
+
+if ($api) {
+   header("Access-Control-Allow-Origin: *");
+   header('Content-type: application/json');
+
+   //$sth = $dbh->prepare("SELECT id_atendimento, id_cliente, id_empresa, id_midia, id_servico, id_consultor, id_consultor, id_forma_pagamento FROM atendimento ORDER BY id_atendimento ASC limit 200");
+
+
+   $sth = 
+	$dbh->prepare("
+	SELECT TRIM(UPPER(cliente.nome_usuario)) AS nome,
+        cliente.telefone AS telefone, cliente.celular AS celular, LOWER(cliente.email) AS email,
+	empresa.nome_empresa AS empresa, midia.nome_midia AS midia,
+	servico.nome_servico AS servico,
+	usuario.nome AS consultor,
+	UCASE(forma_pagamento.nome_forma_pagamento) AS formaPagamento,
+	atendimento.valor_proposta AS valorProposta,
+	fluxo_atendimento.nome AS status,
+	DATE_FORMAT(atendimento.dt_inclusao, '%d/%m/%Y') AS dataInclusao,
+	DATE_FORMAT(atendimento.dt_agendamento, '%d/%m/%Y') AS dataAgendamento
+	FROM atendimento 
+	INNER JOIN cliente ON atendimento.id_cliente = cliente.id_cliente 
+	JOIN empresa ON atendimento.id_empresa = empresa.id_empresa 
+	JOIN midia ON atendimento.id_midia = midia.id_midia
+        JOIN usuario ON atendimento.id_servico = usuario.id_usuario
+	JOIN servico ON atendimento.id_servico$sth =
+        $dbh"
+        SELECT TRIM(UPPER(cliente.nome_usuario)) AS nome,
+        cliente.telefone AS telefone, cliente.celular AS celular, LOWER(cliente.email) AS email,
+        empresa.nome_empresa AS empresa, midia.nome_midia AS midia,
+        servico.nome_servico AS servico,
+        usuario.nome AS consultor, = servico.id_servico
+	JOIN forma_pagamento ON atendimento.id_forma_pagamento = forma_pagamento.id_forma_pagamento
+	JOIN fluxo_atendimento ON atendimento.id_fluxo_atendimento = fluxo_atendimento.id_fluxo_atendimento
+	ORDER BY atendimento.dt_agendamento DESC limit 400");
+
+//$sth = $dbh->prepare("SELECT * FROM servico limit 20");
+   //$sth = $dbh->prepare("SELECT * FROM cliente ORDER BY id_cliente DESC limit 20");
+   //$sth = $dbh->prepare("SELECT * FROM atendimento where id_atendimento = '1329014'");
+   //$sth = $dbh->prepare("SELECT * FROM cliente where telefone LIKE '%9224-8110' limit 20");
+   //$sth = $dbh->prepare("SELECT * FROM atendimento limit 100");
+   $sth->execute();
+
+   $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+   echo json_encode($result);
+} else {
+   echo 'API.php';
+
+   echo '<hr>';
+
+$dbs = $dbh->query( 'SHOW TABLES' );
+
+while( ( $db = $dbs->fetchColumn( 0 ) ) !== false )
+{
+    echo $db.'<br>';
+}
+
+echo '<hr>';
+
+$sth = $dbh->prepare("SELECT * FROM status");
+$sth->execute();
+
+$result = $sth->fetchAll();
+
+echo "<pre>";
+  var_dump($result);
+echo "</pre>";
+
+}
